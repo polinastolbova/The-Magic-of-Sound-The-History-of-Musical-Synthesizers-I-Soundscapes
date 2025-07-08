@@ -1,0 +1,57 @@
+<CsoundSynthesizer>
+<CsOptions>
+-odac
+</CsOptions>
+<CsInstruments>
+
+sr = 44100
+ksmps = 32
+nchnls=2
+0dbfs=1
+
+giSine ftgen 1, 0, 8192, 10, 1
+
+instr 1 ; Smooth atmospheric texture
+kenv linseg 0, p3*0.1, 0.4, p3*0.8, 0.4, p3*0.1, 0
+a1 pinkish 0.1
+a2 poscil 0.03, 0.09, giSine
+a3 poscil 0.03, 0.07, giSine
+aL = (a1 + a2) * 0.1 * kenv
+aR = (a1 + a3) * 0.1 * kenv
+out aL, aR
+endin
+
+instr 2 ; Melodic electronic sound in the style of Soviet electronics
+kenv linseg 0, p3*0.2, 0.3, p3*0.6, 0.2, p3*0.2, 0
+
+; Basic tone with smooth amplitude modulation
+kfreq linseg 220, p3*0.5, 330, p3*0.5, 220 ; slow transitions between notes
+kamod poscil 0.03, 0.1, giSine ; slow amplitude modulation
+
+aosc poscil (0.1 + kamod) * kenv, kfreq, giSine
+
+; Let's add a little filter for softness
+afilt tone aosc, 1000
+
+; Pan slightly to the left
+out afilt * 0.5, afilt * 0.2
+endin
+
+instr 3 ; Photooptic beam - soft drone with smooth modulation
+kenv linseg 0, p3*0.25, 0.25, p3*0.5, 0.25, p3*0.25, 0
+kfreq linseg 90, p3, 180
+amod poscil 0.012, 0.07, giSine
+asig poscil 0.05 * kenv, kfreq + amod, giSine
+asig = asig * 0.4 ; overall level is quieter
+out asig, asig
+endin
+
+</CsInstruments>
+<CsScore>
+f1 0 1024 10 1
+
+i1 0 60
+i2 0 60
+i3 0 60
+</CsScore>
+</CsoundSynthesizer>
