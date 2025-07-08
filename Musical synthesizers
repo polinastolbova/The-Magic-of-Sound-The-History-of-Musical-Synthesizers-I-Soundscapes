@@ -1,0 +1,60 @@
+<CsoundSynthesizer>
+<CsOptions> 
+-odac
+</CsOptions>
+
+<CsInstruments>
+sr = 44100
+ksmps=64
+nchnls=2
+0dbfs=1
+
+giSine ftgen 1, 0, 8192, 10, 1
+giSaw ftgen 2, 0, 8192, 7, 1, 0, -1
+giTri ftgen 3, 0, 8192, 7, 0, 1, 0
+
+; Main tool
+instr 1 
+iWave = p4 
+iFreqBase = p5 
+iPan = p6 
+
+; Frequency modulation (slow breathing)
+kModFreq randh 20, 0.1
+kFreq = iFreqBase + kModFreq
+
+; Amplitude pulse
+kAmpLFO oscil 0.4, 0.05, giSine
+
+; Basic sound
+aSig oscili 0.3 + kAmpLFO, kFreq, iWave
+
+; Simple filtering
+kCutoff randh 4000, 0.15
+aFilt moogladder aSig, abs(kCutoff)+400, 0.4
+
+; Panning
+aL, aR pan2 aFilt, iPan
+
+; Add reverb
+aRevL, aRevR reverbsc aL, aR, 0.85, 12000
+
+outs aL + aRevL*0.3, aR + aRevR*0.3
+endin
+
+</CsInstruments>
+
+<CsScore>
+; wave form | base freq | pan
+
+i1 0 60 1 220 0.2 ; sine
+i1 0 60 2 330 0.8 ; saw
+i1 0 60 3 440 0.5 ; triangle
+i1 0 60 2 110 0.6 ; saw low
+i1 0 60 1 880 0.4 ; sine high
+i1 0 60 3 176 0.7 ; warm bass
+
+e
+</CsScore>
+
+</CsoundSynthesizer>
