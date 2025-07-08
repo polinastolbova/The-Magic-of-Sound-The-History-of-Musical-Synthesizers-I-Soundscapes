@@ -1,0 +1,37 @@
+<CsoundSynthesizer>
+<CsOptions>
+-odac
+</CsOptions>
+
+<CsInstruments>
+sr = 44100
+ksmps = 32
+nchnls = 2
+0dbfs = 1
+
+giwave ftgen 1, 0, 16384, 10, 1, 0.5, 0.3, 0.2 ; harmonic-rich wave
+
+instr 1
+; --- Theremin with vibrato and smooth transition
+kamp linseg 0, 0.5, 0.2, p3 - 1, 0.2, 0.5, 0
+kfreq linseg p4, p3, p5
+kvib lfo 3, 6, 1
+afreq = kfreq + kvib
+asig poscil kamp, ​​afreq, giwave
+outs asig, asig
+endin
+</CsInstruments>
+
+<CsScore>
+; Tonal Transitions for 60 Seconds
+i1 0 6,392,523.25
+i1 6 5,523.25,440
+i1 11 7,440,659.25
+i1 18 6,659.25,349.23
+i1 24 7,349.23,493.88
+i1 31 5,493.88,261.63
+i1 36 6,261.63,392.00
+i1 42 8,392,440
+i1 50 10,440,329.63
+</CsScore>
+</CsoundSynthesizer>
